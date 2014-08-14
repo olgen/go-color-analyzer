@@ -1,4 +1,4 @@
-package color_analyzer
+package main
 
 import (
     "testing"
@@ -46,7 +46,7 @@ func checkImage(file string, expectedColor color.Color) bool{
     if err != nil {
         panic(err.Error())
     }
-    guessedColor := Analyze(img)
+    guessedColor := Analyze(&img)
     return withinTolerance(expectedColor, guessedColor, tolerance)
 }
 

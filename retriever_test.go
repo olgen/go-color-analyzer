@@ -1,4 +1,4 @@
-package color_analyzer
+package main
 
 import (
     "testing"
