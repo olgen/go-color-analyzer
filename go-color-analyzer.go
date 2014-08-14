@@ -7,9 +7,11 @@ import (
     "fmt"
 
     "image"
+    _ "image/gif"
+    _ "image/jpeg"
+    _ "image/png"
     "image/color"
     "bufio"
-
 )
 
 func main(){
@@ -30,7 +32,6 @@ func httpHandler(writer http.ResponseWriter, req *http.Request){
 }
 
 func handleUrl(writer http.ResponseWriter, url string) {
-    log.Printf("Got url: %v", url)
     img, err := RetrieveImageFromUrl(url)
     if err != nil {
         log.Printf(err.Error())
@@ -46,8 +47,9 @@ func handleUrl(writer http.ResponseWriter, url string) {
     }
 
     color := Analyze(img)
-    fmt.Println("Got color: %v", color)
-    /* fmt.Fprintf(writer, "Color=%v", color) */
+    hexColor := HexColor(color)
+    fmt.Println("Got color: %v", hexColor)
+    fmt.Fprintf(writer, "%v", hexColor)
 }
 
 func portSetting() string {
@@ -58,31 +60,44 @@ func portSetting() string {
     return ":" + port
 }
 
-func RetrieveImageFromUrl(url string) (*image.Image, error) {
+func RetrieveImageFromUrl(url string) (image.Image, error) {
+    log.Printf("Getting image from url=%v", url)
     response, err := http.Get(url)
+    log.Printf("Status: %v", response.Status)
+    log.Printf("Encoding: %v", response.TransferEncoding)
     if err != nil {
         return nil, err
     }
-    img, _, err := image.Decode(bufio.NewReader(response.Body))
-    return &img, nil
+    defer response.Body.Close()
+
+    img, imgType, err := image.Decode(bufio.NewReader(response.Body))
+    log.Printf("ImageType: %v", imgType)
+
+    return img, nil
 }
 
-func Analyze(img *image.Image) color.Color {
-    /* return img.At(2,2) */
-    /* return color.RGBA{0,0,0,0} */
+func HexColor(col color.Color) string {
+    r,g,b,_ := col.RGBA()
+    log.Printf("Color.RGBA= %v", col)
+    hex := fmt.Sprintf("#%02x%02x%02x", uint8(r), uint8(g), uint8(b))
+    log.Printf("Color.HEX= %v", hex)
+    return hex
+}
+
+func Analyze(img image.Image) color.Color {
     return mostUsedColor(img)
 }
 
-func mostUsedColor(img *image.Image) color.Color {
+func mostUsedColor(img image.Image) color.Color {
     counts := make(map[color.Color]int)
     var bestColor color.Color
     bestCount := 0
 
-    b := (*img).Bounds()
+    b := img.Bounds()
     for y := b.Min.Y; y < b.Max.Y; y++ {
         for x := b.Min.X; x < b.Max.X; x++ {
 
-            currColor := (*img).At(x,y)
+            currColor := img.At(x,y)
             counts[currColor]++
             currCount := counts[currColor]
             if currCount > bestCount {

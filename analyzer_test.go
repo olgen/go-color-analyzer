@@ -7,9 +7,6 @@ import (
     "bufio"
     "image"
     "image/color"
-    _ "image/gif"
-    _ "image/jpeg"
-    _ "image/png"
 
     "fmt"
 )
@@ -22,6 +19,7 @@ var (
         "images/kite_runner.jpeg": color.RGBA{143, 165, 116, 255},
         "images/ruby.jpeg": color.RGBA{243, 243, 219, 255},
         "images/ruby_rosa.jpeg": color.RGBA{246, 178, 193, 255},
+        "images/spanish_rosa.jpeg": color.RGBA{222, 5, 79, 255},
     }
 )
 
@@ -46,7 +44,7 @@ func checkImage(file string, expectedColor color.Color) bool{
     if err != nil {
         panic(err.Error())
     }
-    guessedColor := Analyze(&img)
+    guessedColor := Analyze(img)
     return withinTolerance(expectedColor, guessedColor, tolerance)
 }
 
