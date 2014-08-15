@@ -15,8 +15,10 @@ import (
 )
 
 const (
-    DarkThreshold =    5 / 255.0 * 65535.0
-    LightThreshold = 250 / 255.0 * 65535.0
+    RGBConversion =  65535.0 / 255.0
+    DarkThreshold =    5 * RGBConversion
+    LightThreshold = 250 * RGBConversion
+    SaturationThreshold = 10 * RGBConversion
 )
 func main(){
     http.HandleFunc("/color", httpHandler )
@@ -112,7 +114,7 @@ func mostUsedColor(img image.Image) color.Color {
 }
 
 func ignoreColor(col color.Color) bool {
-    return tooDark(col) || tooLight(col)
+    return tooDark(col) || tooLight(col) || tooGray(col)
 }
 
 func tooDark(col color.Color) bool {
@@ -123,4 +125,18 @@ func tooDark(col color.Color) bool {
 func tooLight(col color.Color) bool {
     r,g,b,_ := col.RGBA()
     return r > LightThreshold && g > LightThreshold && b > LightThreshold
+}
+
+func tooGray(col color.Color) bool {
+    r,g,b,_ := col.RGBA()
+    t := uint32(SaturationThreshold)
+    return (diff(r, g) < t && diff(g, b) < t) && diff(r,b) < t
+}
+
+func diff(n1 uint32, n2 uint32) uint32{
+    if n1 > n2 {
+        return n1 - n2
+    } else {
+        return n2 - n1
+    }
 }

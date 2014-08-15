@@ -21,6 +21,7 @@ var (
         "images/ruby_rosa.jpeg": color.RGBA{246, 178, 193, 255},
         "images/spanish_rosa.jpeg": color.RGBA{215, 15, 83, 255},
         "images/lord_of_the_flies.jpg": color.RGBA{204, 52, 66, 255},
+        "images/grey_mavis_gallant.jpeg": color.RGBA{245, 148, 49, 255},
     }
 )
 
