@@ -14,6 +14,10 @@ import (
     "bufio"
 )
 
+const (
+    DarkThreshold =    5 / 255.0 * 65535.0
+    LightThreshold = 250 / 255.0 * 65535.0
+)
 func main(){
     http.HandleFunc("/color", httpHandler )
 
@@ -89,22 +93,37 @@ func Analyze(img image.Image) color.Color {
 }
 
 func mostUsedColor(img image.Image) color.Color {
-    counts := make(map[color.Color]int)
+    histogram := make(map[color.Color]int)
     var bestColor color.Color
     bestCount := 0
 
-    b := img.Bounds()
-    for y := b.Min.Y; y < b.Max.Y; y++ {
-        for x := b.Min.X; x < b.Max.X; x++ {
+    bounds := img.Bounds()
+    for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+        for x := bounds.Min.X; x < bounds.Max.X; x++ {
 
             currColor := img.At(x,y)
-            counts[currColor]++
-            currCount := counts[currColor]
-            if currCount > bestCount {
+
+            histogram[currColor]++
+            currCount := histogram[currColor]
+            if currCount > bestCount && !ignoreColor(currColor){
                 bestCount = currCount
                 bestColor = currColor
             }
         }
     }
     return bestColor
+}
+
+func ignoreColor(col color.Color) bool {
+    return tooDark(col) || tooLight(col)
+}
+
+func tooDark(col color.Color) bool {
+    r,g,b,_ := col.RGBA()
+    return r < DarkThreshold && g < DarkThreshold && b < DarkThreshold
+}
+
+func tooLight(col color.Color) bool {
+    r,g,b,_ := col.RGBA()
+    return r > LightThreshold && g > LightThreshold && b > LightThreshold
 }

@@ -19,7 +19,8 @@ var (
         "images/kite_runner.jpeg": color.RGBA{143, 165, 116, 255},
         "images/ruby.jpeg": color.RGBA{243, 243, 219, 255},
         "images/ruby_rosa.jpeg": color.RGBA{246, 178, 193, 255},
-        "images/spanish_rosa.jpeg": color.RGBA{222, 5, 79, 255},
+        "images/spanish_rosa.jpeg": color.RGBA{215, 15, 83, 255},
+        "images/lord_of_the_flies.jpg": color.RGBA{204, 51, 66, 255},
     }
 )
 
