@@ -82,10 +82,7 @@ func RetrieveImageFromUrl(url string) (image.Image, error) {
 
 func HexColor(col color.Color) string {
     r,g,b,_ := col.RGBA()
-    log.Printf("Color.RGBA= %v", col)
-    hex := fmt.Sprintf("#%02x%02x%02x", uint8(r), uint8(g), uint8(b))
-    log.Printf("Color.HEX= %v", hex)
-    return hex
+    return fmt.Sprintf("#%02x%02x%02x", uint8(r), uint8(g), uint8(b))
 }
 
 func Analyze(img image.Image) color.Color {
